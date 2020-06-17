@@ -2,6 +2,7 @@ const Sauce = require('../models/sauce');
 const jwt = require('jsonwebtoken');
 const fs = require('fs')
 
+// passer en async 
 exports.createSauce = (req, res, next) => {
     const token = req.headers.authorization.split(' ')[1];
     const tokenDecoded = jwt.verify(token, 'RANDOM KEY TO CHANGE');
@@ -27,7 +28,7 @@ exports.createSauce = (req, res, next) => {
 exports.showAll = (req, res, next) => {
     Sauce.find()
         .then(all => res.status(200).json(all))
-        .catch(error => res.status(400).json({ error }))
+        .catch(error => res.status(404).json({ error }))
 }
 
 exports.showOne = (req, res, next) => {
@@ -48,6 +49,7 @@ exports.modifySauce = (req, res, next) => {
         .catch(error => res.status(400).json({ error }));
 }
 
+// passer en async 
 exports.deleteSauce = (req, res, next) => {
     Sauce.findOne({ _id: req.params.id })
         .then(sauce => {
@@ -59,7 +61,7 @@ exports.deleteSauce = (req, res, next) => {
             })
         })
         .catch(error => res.status(500).json({ error }));
-};
+}
 
 exports.likeDislike = (req, res, next) => {
     const userId = req.body.userId;
@@ -70,16 +72,16 @@ exports.likeDislike = (req, res, next) => {
             if (like == -1) {
                 if (!sauce.usersDisliked.includes(userId)) {
                     // => l'ajouter à la bonne tab
-                    Sauce.updateOne({ _id: req.params.id }, { $push: { usersDisliked: userId }, $inc: {dislikes: 1} })
+                    Sauce.updateOne({ _id: req.params.id }, { $push: { usersDisliked: userId }, $inc: { dislikes: 1 } })
                         .then(() => res.status(200).json({ message: 'user ajouté a usersDisliked' }))
                         .catch(error => res.status(500).json({ error }));
                 } else {
                     // => renvoi "produit deja liké/disliké"
-                    return res.status(400).json({ message: 'produit deja liké/disliké' });
+                    return (res.status(400).json({ message: 'produit deja liké/disliké' }));
                 }
                 if (sauce.usersLiked.includes(userId)) {
                     // => suppr du tab userLiked
-                    Sauce.updateOne({ _id: req.params.id }, { $pull: { usersLiked: userId }, $inc: {likes: -1}  })
+                    Sauce.updateOne({ _id: req.params.id }, { $pull: { usersLiked: userId }, $inc: { likes: -1 } })
                         .then(() => res.status(200).json({ message: 'user supprimé de usersLiked' }))
                         .catch(error => res.status(500).json({ error }));
                 }
@@ -88,13 +90,13 @@ exports.likeDislike = (req, res, next) => {
                 // => l'enlever du tab correspondant
                 if (sauce.usersLiked.includes(userId)) {
                     // => suppr du tab userLiked
-                    Sauce.updateOne({ _id: req.params.id }, { $pull: { usersLiked: userId }, $inc: {likes: -1} })
+                    Sauce.updateOne({ _id: req.params.id }, { $pull: { usersLiked: userId }, $inc: { likes: -1 } })
                         .then(() => res.status(200).json({ message: 'user supprimé de usersLiked' }))
                         .catch(error => res.status(500).json({ error }));
                 }
                 if (sauce.usersDisliked.includes(userId)) {
                     // => suppr du tab userDisliked
-                    Sauce.updateOne({ _id: req.params.id }, { $pull: { usersDisliked: userId }, $inc: {dislikes: -1} })
+                    Sauce.updateOne({ _id: req.params.id }, { $pull: { usersDisliked: userId }, $inc: { dislikes: -1 } })
                         .then(() => res.status(200).json({ message: 'user supprimé de usersDisliked' }))
                         .catch(error => res.status(500).json({ error }));
                 }
@@ -102,7 +104,7 @@ exports.likeDislike = (req, res, next) => {
             } else if (like == 1) {
                 if (!sauce.usersLiked.includes(userId)) {
                     // => l'ajouter à la bonne tab
-                    Sauce.updateOne({ _id: req.params.id }, { $push: { usersLiked: userId }, $inc: {likes: 1} })
+                    Sauce.updateOne({ _id: req.params.id }, { $push: { usersLiked: userId }, $inc: { likes: 1 } })
                         .then(() => res.status(200).json({ message: 'user ajouté a usersLiked' }))
                         .catch(error => res.status(500).json({ error }));
                 } else {
@@ -111,7 +113,7 @@ exports.likeDislike = (req, res, next) => {
                 }
                 if (sauce.usersDisliked.includes(userId)) {
                     // => suppr du tab userDisliked
-                    Sauce.updateOne({ _id: req.params.id }, { $pull: { usersDisliked: userId }, $inc: {dislikes: -1} })
+                    Sauce.updateOne({ _id: req.params.id }, { $pull: { usersDisliked: userId }, $inc: { dislikes: -1 } })
                         .then(() => res.status(200).json({ message: 'user supprimé de usersDisliked' }))
                         .catch(error => res.status(500).json({ error }));
                 }
