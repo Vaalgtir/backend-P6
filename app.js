@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');  
+const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const path = require('path')
 
@@ -12,13 +12,27 @@ const sauceRoute = require('./routes/sauce');
 const User = require('./models/User');
 const Sauce = require('./models/sauce');
 
-mongoose.connect('mongodb+srv://user1:SS%26%5CZMdyqy3SuybOLu%28m@cluster0-hmimt.gcp.mongodb.net/Projet?retryWrites=true&w=majority',
+// connexion to mongoDB
+const crypt = require('./security/crypt');
+
+var user = 'IELASRVQRNHBAYHQN';
+var mdp = 'SHHGLOIRMUGVUDKEEW';
+// Enter a 2 word key
+var key = 'LWVIBDJYYCBUHMVVQYQB IELASRVQRNHBAYHQN';
+
+var cryptedInfos = crypt.crypt(user, mdp, key);
+var userCrypted = cryptedInfos.split(' ')[1];
+var mdpCrypted = cryptedInfos.split(' ')[0];
+
+mongoose.connect('mongodb+srv://' + userCrypted + ':' + mdpCrypted + '@cluster0-hmimt.gcp.mongodb.net/Projet?retryWrites=true&w=majority',
     {
         useNewUrlParser: true,
         useUnifiedTopology: true
     })
     .then(() => console.log('Connexion à MongoDB réussie !'))
     .catch(() => console.log('Connexion à MongoDB échouée !'));
+
+// connexion to mongoDB ***END***
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
