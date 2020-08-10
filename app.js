@@ -31,7 +31,6 @@ mongoose.connect('mongodb+srv://' + userCrypted + ':' + mdpCrypted + '@cluster0-
     })
     .then(() => console.log('Connexion à MongoDB réussie !'))
     .catch(() => console.log('Connexion à MongoDB échouée !'));
-
 // connexion to mongoDB ***END***
 
 app.use((req, res, next) => {

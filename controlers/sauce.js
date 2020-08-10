@@ -2,6 +2,8 @@ const Sauce = require('../models/sauce');
 const jwt = require('jsonwebtoken');
 const fs = require('fs')
 
+const Error = require('../security/error');
+
 // passer en async 
 exports.createSauce = (req, res, next) => {
     const token = req.headers.authorization.split(' ')[1];
@@ -22,19 +24,19 @@ exports.createSauce = (req, res, next) => {
 
     sauce.save()
         .then(response => res.status(201).json({ message: response }))
-        .catch(error => res.status(400).json({ error }));
+        .catch(error => Error.errorManagement(res, 400, error));
 }
 
 exports.showAll = (req, res, next) => {
     Sauce.find()
         .then(all => res.status(200).json(all))
-        .catch(error => res.status(404).json({ error }))
+        .catch(error => Error.errorManagement(res, 400, error));
 }
 
 exports.showOne = (req, res, next) => {
     Sauce.findOne({ _id: req.params.id })
         .then(sauce => res.status(200).json(sauce))
-        .catch(error => res.status(404).json({ error }));
+        .catch(error => Error.errorManagement(res, 404, error));
 }
 
 exports.modifySauce = (req, res, next) => {
@@ -46,7 +48,7 @@ exports.modifySauce = (req, res, next) => {
 
     Sauce.updateOne({ _id: req.params.id }, { ...reqBody, _id: req.params.id })
         .then(response => res.status(200).json({ message: response }))
-        .catch(error => res.status(400).json({ error }));
+        .catch(error => Error.errorManagement(res, 400, error));
 }
 
 // passer en async 
@@ -57,10 +59,10 @@ exports.deleteSauce = (req, res, next) => {
             fs.unlink(`images/${filename}`, () => {
                 Sauce.deleteOne({ _id: req.params.id })
                     .then(response => res.status(200).json({ message: response }))
-                    .catch(error => res.status(400).json({ error }));
+                    .catch(error => Error.errorManagement(res, 400, error));
             })
         })
-        .catch(error => res.status(500).json({ error }));
+        .catch(error => Error.errorManagement(res, 500, error));
 }
 
 exports.likeDislike = (req, res, next) => {
@@ -74,7 +76,7 @@ exports.likeDislike = (req, res, next) => {
                     // => l'ajouter à la bonne tab
                     Sauce.updateOne({ _id: req.params.id }, { $push: { usersDisliked: userId }, $inc: { dislikes: 1 } })
                         .then(() => res.status(200).json({ message: 'user ajouté a usersDisliked' }))
-                        .catch(error => res.status(500).json({ error }));
+                        .catch(error => Error.errorManagement(res, 500, error));
                 } else {
                     // => renvoi "produit deja liké/disliké"
                     return (res.status(400).json({ message: 'produit deja liké/disliké' }));
@@ -83,7 +85,7 @@ exports.likeDislike = (req, res, next) => {
                     // => suppr du tab userLiked
                     Sauce.updateOne({ _id: req.params.id }, { $pull: { usersLiked: userId }, $inc: { likes: -1 } })
                         .then(() => res.status(200).json({ message: 'user supprimé de usersLiked' }))
-                        .catch(error => res.status(500).json({ error }));
+                        .catch(error => Error.errorManagement(res, 500, error));
                 }
 
             } else if (like == 0) {
@@ -92,13 +94,13 @@ exports.likeDislike = (req, res, next) => {
                     // => suppr du tab userLiked
                     Sauce.updateOne({ _id: req.params.id }, { $pull: { usersLiked: userId }, $inc: { likes: -1 } })
                         .then(() => res.status(200).json({ message: 'user supprimé de usersLiked' }))
-                        .catch(error => res.status(500).json({ error }));
+                        .catch(error => Error.errorManagement(res, 500, error));
                 }
                 if (sauce.usersDisliked.includes(userId)) {
                     // => suppr du tab userDisliked
                     Sauce.updateOne({ _id: req.params.id }, { $pull: { usersDisliked: userId }, $inc: { dislikes: -1 } })
                         .then(() => res.status(200).json({ message: 'user supprimé de usersDisliked' }))
-                        .catch(error => res.status(500).json({ error }));
+                        .catch(error => Error.errorManagement(res, 500, error));
                 }
 
             } else if (like == 1) {
@@ -106,7 +108,7 @@ exports.likeDislike = (req, res, next) => {
                     // => l'ajouter à la bonne tab
                     Sauce.updateOne({ _id: req.params.id }, { $push: { usersLiked: userId }, $inc: { likes: 1 } })
                         .then(() => res.status(200).json({ message: 'user ajouté a usersLiked' }))
-                        .catch(error => res.status(500).json({ error }));
+                        .catch(error => Error.errorManagement(res, 500, error));
                 } else {
                     // => renvoi "produit deja liké/disliké"
                     return res.status(400).json({ message: 'produit deja liké/disliké' });
@@ -115,9 +117,9 @@ exports.likeDislike = (req, res, next) => {
                     // => suppr du tab userDisliked
                     Sauce.updateOne({ _id: req.params.id }, { $pull: { usersDisliked: userId }, $inc: { dislikes: -1 } })
                         .then(() => res.status(200).json({ message: 'user supprimé de usersDisliked' }))
-                        .catch(error => res.status(500).json({ error }));
+                        .catch(error => Error.errorManagement(res, 500, error));
                 }
             }
         })
-        .catch(error => res.status(404).json({ error }));
+        .catch(error => Error.errorManagement(res, 404, error));
 }

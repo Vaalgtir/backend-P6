@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
+const Error = require('../security/error');
+
 const User = require('../models/User');
 
 exports.createUser = (req, res, next) => {
@@ -13,22 +15,22 @@ exports.createUser = (req, res, next) => {
 
             user.save()
                 .then(() => res.status(201).json({ message: 'User créé' }))
-                .catch(error => res.status(500).json({ error }));
+                .catch(error => Error.errorManagement(res, 500, error));
         })
-        .catch(error => res.status(500).json({ error }));
+        .catch(error => Error.errorManagement(res, 500, error));
 };
 
 exports.login = (req, res, next) => {
     User.findOne({ email: req.body.email })
         .then(user => {
             if(!user) {
-                return res.status(404).json({ error: 'Utilisateur non trouvé' });
+                return (res.status(404).json({ error: 'Utilisateur non trouvé' }));
             }
 
             bcrypt.compare(req.body.password, user.password)
                 .then(valid => {
                     if(!valid) {
-                        return res.status(401).json({ error: 'Mot de passe erroné' });
+                        return (res.status(401).json({ error: 'Mot de passe erroné' }));
                     }
                     res.status(200).json({
                         userId: user._id,
@@ -39,7 +41,7 @@ exports.login = (req, res, next) => {
                         )
                     });
                 })
-                .catch(error => res.status(500).json({ error }));
+                .catch(error => Error.errorManagement(res, 500, error));
         })
-        .catch(error => res.status(500).json({ error }));
+        .catch(error => Error.errorManagement(res, 500, error));
 }
