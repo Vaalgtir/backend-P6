@@ -10,18 +10,16 @@ const userRoute = require('./routes/user');
 const sauceRoute = require('./routes/sauce');
 
 // connexion to mongoDB
-const crypt = require('./security/crypt');
+// const crypt = require('./security/crypt');
 
-var user = 'IELASRVQRNHBAYHQN';
-var mdp = 'SHHGLOIRMUGVUDKEEW';
-// Enter a 2 word key
-var key = 'LWVIBDJYYCBUHMVVQYQB IELASRVQRNHBAYHQN';
+// // Enter a 2 word key
+// var key = 'LWVIBDJYYCBUHMVVQYQB IELASRVQRNHBAYHQN';
 
-var cryptedInfos = crypt.crypt(user, mdp, key);
-var userCrypted = cryptedInfos.split(' ')[1];
-var mdpCrypted = cryptedInfos.split(' ')[0];
+// var cryptedInfos = crypt.crypt(user, mdp, key);
+// var userCrypted = cryptedInfos.split(' ')[1];
+// var mdpCrypted = cryptedInfos.split(' ')[0];
 
-mongoose.connect('mongodb+srv://' + userCrypted + ':' + mdpCrypted + '@cluster0-hmimt.gcp.mongodb.net/Projet?retryWrites=true&w=majority',
+mongoose.connect('mongodb+srv://HUCMLBQYLAGF:MOCEYSNNVWFKPY@cluster0-hmimt.gcp.mongodb.net/Projet?retryWrites=true&w=majority',
     {
         useNewUrlParser: true,
         useUnifiedTopology: true

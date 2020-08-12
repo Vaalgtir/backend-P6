@@ -2,7 +2,7 @@ const Sauce = require('../models/sauce');
 const jwt = require('jsonwebtoken');
 const fs = require('fs')
 
-const Error = require('../security/error');
+const Error = require('../security_public/error');
 
 exports.createSauce = (req, res, next) => {
     const token = req.headers.authorization.split(' ')[1];
