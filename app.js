@@ -9,9 +9,6 @@ const app = express();
 const userRoute = require('./routes/user');
 const sauceRoute = require('./routes/sauce');
 
-const User = require('./models/User');
-const Sauce = require('./models/sauce');
-
 // connexion to mongoDB
 const crypt = require('./security/crypt');
 

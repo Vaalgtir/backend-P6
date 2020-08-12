@@ -4,7 +4,6 @@ const fs = require('fs')
 
 const Error = require('../security/error');
 
-// passer en async 
 exports.createSauce = (req, res, next) => {
     const token = req.headers.authorization.split(' ')[1];
     const tokenDecoded = jwt.verify(token, 'RANDOM KEY TO CHANGE');
@@ -50,8 +49,7 @@ exports.modifySauce = (req, res, next) => {
         .then(response => res.status(200).json({ message: response }))
         .catch(error => Error.errorManagement(res, 400, error));
 }
-
-// passer en async 
+ 
 exports.deleteSauce = (req, res, next) => {
     Sauce.findOne({ _id: req.params.id })
         .then(sauce => {
