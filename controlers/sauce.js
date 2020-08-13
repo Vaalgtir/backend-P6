@@ -6,7 +6,7 @@ const Error = require('../security_public/error');
 
 exports.createSauce = (req, res, next) => {
     const token = req.headers.authorization.split(' ')[1];
-    const tokenDecoded = jwt.verify(token, 'RANDOM KEY TO CHANGE');
+    const tokenDecoded = jwt.verify(token, 'LTWNHGKXTJSSRMPGDEWVUUXGP');
     const userId = tokenDecoded.userId;
 
     const sauceObject = JSON.parse(req.body.sauce);
